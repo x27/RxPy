@@ -522,7 +522,7 @@ class rxv1_processor_t(processor_t):
         if sz == 3:
             return
         insn.memex = sz | MEMEX_NEED_SHOW
-        self.set_reg(insn, 2, 2, 0) # rs
+        self.set_reg(insn, 0, 2, 0) # rs
         insn.Op2.type = o_phrase
         insn.Op2.phrase = PHRASE_R_R
         insn.Op2.value = val0 & 0x0F # ri
@@ -1182,6 +1182,7 @@ class rxv1_processor_t(processor_t):
                 ctx.out_symbol('[')
                 ctx.out_register(self.reg_names[op.value&0xF])
                 ctx.out_symbol(',')
+                ctx.out_symbol(' ')
                 ctx.out_register(self.reg_names[op.reg])
                 ctx.out_symbol(']')
             elif op.phrase == PHRASE_R_RANGE:
