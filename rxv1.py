@@ -658,10 +658,10 @@ class rxv1_processor_t(processor_t):
         cd = self.get_hl_byte(insn.ea+2) & 0xf
         if cd == 0x0E or cd == 0x0F:
             return
+        insn.cond = cd
         insn.Op1.type = o_imm
         insn.Op1.dtype = dt_byte
         insn.Op1.value = (self.get_hl_byte(insn.ea+1) >> 2) & 7
-        insn.memex = cd
         insn.size = 3 + self.set_ld(insn, 1, 1, 0, MEMEX_B, 2, 4, 3)
 
     def decode_b2_imm5_cd_rd(self, insn):
