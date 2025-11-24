@@ -462,7 +462,7 @@ class rxv1_processor_t(processor_t):
         insn.Op1.type = o_imm
         insn.Op1.dtype = dt_byte
         insn.Op1.value = self.get_hl_byte(insn.ea + 2)
-        self.set_reg(insn, 1, 1, 4)
+        self.set_reg(insn, 1, 1, 0)
         insn.size = 3
 
     def decode_b2_rd_li(self, insn):
