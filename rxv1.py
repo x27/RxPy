@@ -200,7 +200,7 @@ class rxv1_processor_t(processor_t):
 
     id = PLFM_RXV1
 
-    flag = PR_SEGS | PRN_HEX | PR_RNAMESOK | PR_WORD_INS | PR_USE32 | PR_DEFSEG32
+    flag = PR_SEGS | PRN_HEX | PR_RNAMESOK | PR_WORD_INS | PR_USE32 | PR_DEFSEG32 | PR_BINMEM
 
     cnbits = 8
 
@@ -219,6 +219,20 @@ class rxv1_processor_t(processor_t):
         '\x7f\x95', # rte 
         '\x7f\x94'  # rtf
     ]
+
+    #
+    # Number of digits in floating numbers after the decimal point.
+    # If an element of this array equals 0, then the corresponding
+    # floating point data is not used for the processor.
+    # This array is used to align numbers in the output.
+    #      real_width[0] - number of digits for short floats (only PDP-11 has them)
+    #      real_width[1] - number of digits for "float"
+    #      real_width[2] - number of digits for "double"
+    #      real_width[3] - number of digits for "long double"
+    # Example: IBM PC module has { 0,7,15,19 }
+    #
+    # (optional)
+    real_width = (0, 7, 15, 19)
 
     assembler = {
         'flag' : AS_COLON | AS_ASCIIZ | AS_ASCIIC | AS_1TEXT,
@@ -1147,7 +1161,8 @@ class rxv1_processor_t(processor_t):
                 op.value &= 0xFF
             elif op.dtype == dt_word:
                 op.value &= 0xFFFF
-            ctx.out_value(op, OOFW_IMM | OOFS_NOSIGN)
+            #ctx.out_value(op, OOFW_IMM | OOFS_NOSIGN)
+            ctx.out_value(op, OOFW_IMM)
 
         elif optype in [o_near, o_mem]:
             if not ctx.out_name_expr(op, op.addr, BADADDR):
