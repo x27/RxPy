@@ -417,9 +417,9 @@ class rxv1_processor_t(processor_t):
         self.set_reg(insn, 2, 1, 0)
 
     def decode_b2_rd_rs_rs2(self, insn):
-        self.set_reg(insn, 0, 1, 0)
-        self.set_reg(insn, 1, 2, 4)
-        self.set_reg(insn, 2, 2, 0)
+        self.set_reg(insn, 0, 2, 4)
+        self.set_reg(insn, 1, 2, 0)
+        self.set_reg(insn, 2, 1, 0)
         insn.size = 3
 
     def decode_b1_sz2_dsp5_rd_rs(self, insn):
