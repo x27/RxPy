@@ -1287,7 +1287,7 @@ class rxv1_processor_t(processor_t):
                     if insn.Op1.type == o_reg:
                         prevprev = insn_t()
                         if decode_prev_insn(prevprev, prev.ea) != BADADDR and \
-                            self.get_itype_group(insn.itype) == RX_GROUP_MOV and \
+                            self.get_itype_group(prevprev.itype) == RX_GROUP_MOV and \
                             prevprev.Op1.type == o_imm and \
                             prevprev.Op2.type == o_reg and \
                             prevprev.Op2.reg == insn.Op1.reg:
