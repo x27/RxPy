@@ -251,6 +251,7 @@ class rxv1_processor_t(processor_t):
         'a_dword' : '.dword',
         'a_float' : '.float',
         'a_double' : '.double',
+        'a_dups': "#d dup(#v)",
         'a_bss' : '.block %s',
         'a_equ': ".equ",
         'a_seg': "seg",
