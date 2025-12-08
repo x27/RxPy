@@ -1321,6 +1321,11 @@ class rxv1_processor_t(processor_t):
         if self.get_itype_group(insn.itype) == RX_GROUP_AND and insn.Op1.type == o_imm:
             ida_bytes.op_num(insn.ea, 0)
 
+        # float_inst #imm, ...
+
+        if self.get_itype_group(insn.itype) in [RX_GROUP_FADD, RX_GROUP_FSUB, RX_GROUP_FMUL, RX_GROUP_FDIV, RX_GROUP_FCMP] and insn.Op1.type == o_imm:
+            ida_bytes.op_flt(insn.ea, 0)
+
         return True
 
 
