@@ -328,6 +328,8 @@ class rxv1_processor_t(processor_t):
                 size = 2
             case 3: # simm24
                 op.value = self.get_hl_bits24(insn.ea + imm_offset)
+                if (op.value & 0x800000) != 0:
+                    op.value = op.value | 0xff000000
                 op.dtype = dt_dword
                 size = 3
         return size
