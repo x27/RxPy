@@ -581,7 +581,7 @@ class rxv1_processor_t(processor_t):
         val1 = self.get_hl_byte(insn.ea+1)
         insn.Op1.type = o_displ
         insn.Op1.dtype = dt_byte
-        insn.Op1.value = self.get_memex_scale(sz) * (((val0 & 7) << 1) | ((val1 >> 3) & 1))
+        insn.Op1.value = self.get_memex_scale(sz) * (((val0 & 7) << 2) | ((val1 >> 6) & 2) | ((val1 >> 3) & 1))
         insn.Op1.reg = (val1 >> 4) & 7  
         insn.Op2.type = o_reg
         insn.Op2.dtype = dt_byte
