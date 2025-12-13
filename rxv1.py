@@ -690,7 +690,6 @@ class rxv1_processor_t(processor_t):
         insn.Op1.dtype = dt_byte
         insn.Op1.value = self.get_hl_byte(insn.ea+1) & 0x01F
         self.set_reg(insn, 1, 2, 0)
-        insn.memex = cd
         insn.size = 3
 
     def decode_b3_imm3_ld_rd(self, insn):
