@@ -685,6 +685,7 @@ class rxv1_processor_t(processor_t):
         cd = (self.get_hl_byte(insn.ea+2) >> 4) & 0xf
         if cd == 0x0E or cd == 0x0F:
             return
+        insn.cond = cd + 1
         insn.Op1.type = o_imm
         insn.Op1.dtype = dt_byte
         insn.Op1.value = self.get_hl_byte(insn.ea+1) & 0x01F
