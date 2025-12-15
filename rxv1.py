@@ -932,7 +932,13 @@ class rxv1_processor_t(processor_t):
         self.set_reg(insn, 1, 2, 4)
         self.set_reg(insn, 2, 2, 0)
         insn.size = 3
-        return
+        
+    def decode_b3_imm5_rd(self, insn):
+        insn.Op1.type = o_imm
+        insn.Op1.dtype = dt_byte
+        insn.Op1.value = self.get_hl_byte(insn.ea+1) & 0x1F
+        self.set_reg(insn, 1, 2, 0)
+        insn.size = 3
 
     # TODO: make gynamic instruction groups
 
@@ -966,7 +972,7 @@ class rxv1_processor_t(processor_t):
             { 'name': 'bm_2',       'mnem': [ 0xfd, 0xff, 0xe0, 0xe0, 0x00, 0x00 ], 'decode': self.decode_b2_imm5_cd_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_BM },
             { 'name': 'bnot_1',     'mnem': [ 0xfc, 0xff, 0xe0, 0xe0, 0x0f, 0x0f ], 'decode': self.decode_b3_imm3_ld_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_BNOT },
             { 'name': 'bnot_2',     'mnem': [ 0xfc, 0xff, 0x6c, 0xfc, 0x00, 0x00 ], 'decode': self.decode_b2_ld_rd_rs, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_BNOT },
-            { 'name': 'bnot_3',     'mnem': [ 0xfd, 0xff, 0xe0, 0xe0, 0xf0, 0xf0 ], 'decode': self.decode_b2_ld_rd_rs, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_BNOT },
+            { 'name': 'bnot_3',     'mnem': [ 0xfd, 0xff, 0xe0, 0xe0, 0xf0, 0xf0 ], 'decode': self.decode_b3_imm5_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_BNOT },
             { 'name': 'bra_1',      'mnem': [ 0x08, 0xf8, 0x00, 0x00, 0x00, 0x00 ], 'decode': self.decode_b1_dsp3, 'feature': CF_USE1 | CF_USE1, 'group' : RX_GROUP_BRA },
             { 'name': 'bra_2',      'mnem': [ 0x2e, 0xff, 0x00, 0x00, 0x00, 0x00 ], 'decode': self.decode_b1_dsp8, 'feature': CF_USE1 | CF_USE1, 'group' : RX_GROUP_BRA },
             { 'name': 'bra_3',      'mnem': [ 0x38, 0xff, 0x00, 0x00, 0x00, 0x00 ], 'decode': self.decode_b1_dsp16, 'feature': CF_USE1 | CF_USE1, 'group' : RX_GROUP_BRA },
