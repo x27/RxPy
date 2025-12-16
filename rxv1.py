@@ -274,8 +274,7 @@ class rxv1_processor_t(processor_t):
     }
 
     def get_real_address(self, ea):
-        val = (ea >> 2 << 2) + 3 - (ea & 3)
-        return val
+        return ea ^ 3
 
     def get_hl_byte(self, ea):
         val = ida_bytes.get_wide_byte(self.get_real_address(ea))
