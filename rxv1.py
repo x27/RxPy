@@ -273,11 +273,8 @@ class rxv1_processor_t(processor_t):
         'a_sizeof_fmt': "size %s"
     }
 
-    def get_real_address(self, ea):
-        return ea ^ 3
-
     def get_hl_byte(self, ea):
-        val = ida_bytes.get_wide_byte(self.get_real_address(ea))
+        val = ida_bytes.get_wide_byte(ea ^ 3)
         return val
     
     def get_hl_word(self, ea):
