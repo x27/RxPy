@@ -848,7 +848,7 @@ class rxv1_processor_t(processor_t):
         sz = (self.get_hl_byte(insn.ea+1) >> 4) & 3
         if sz == 3:
             return
-        insn.memex = sz
+        insn.memex = sz | MEMEX_NEED_SHOW
         self.set_reg(insn, 0, 1, 0)
         insn.size = 2
 
@@ -856,7 +856,7 @@ class rxv1_processor_t(processor_t):
         sz = self.get_hl_byte(insn.ea+1) & 3
         if sz == 3:
             return
-        insn.memex = sz
+        insn.memex = sz | MEMEX_NEED_SHOW
         insn.size = 2 + self.set_ld(insn, 0, 0, 0, sz, 1, 4, 2)
 
     def decode_b3_imm1(self, insn):
