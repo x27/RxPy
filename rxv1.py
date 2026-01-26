@@ -835,7 +835,7 @@ class rxv1_processor_t(processor_t):
 
     def decode_b2_rs_cr(self, insn):
         cr = self.get_hl_byte(insn.ea+2) & 0x0F
-        if cr == 1 or cr > 3 and cr < 8 or cr > 12:
+        if (cr == 1) or ((cr > 3) and (cr < 8)) or (cr > 13):
             return
         self.set_reg(insn, 0, 2, 4)
         insn.Op2.type = o_creg
@@ -1318,8 +1318,8 @@ class rxv1_processor_t(processor_t):
 
         elif optype == o_slsb:
             dlsb = (op.value >> 5) & 0x1F
-            slsb = dlsb - (op.value & 0x1F)
-            width = ((op.value >> 10) & 0x1F) - dlsb
+            slsb = (dlsb - (op.value & 0x1F)) & 0x1f
+            width = (((op.value >> 10) & 0x1F) - dlsb) & 0x1f
             ctx.out_symbol('#')
             ctx.out_long(slsb, 10)
             ctx.out_symbol(',')
@@ -1591,7 +1591,7 @@ class rxv1_processor_t(processor_t):
             "isp", "usp", "intb", "pc", "psw", "bpc", "bpsw" "fintv", "fpsw", "cs", "ds"
         ]
         self.creg_names = [
-            "psw", "pc", "usp", "fpsw", "", "", "", "", "bpsw", "bpc", "isp", "fintv", "intb", "", "", ""
+            "psw", "pc", "usp", "fpsw", "", "", "", "", "bpsw", "bpc", "isp", "fintv", "intb", "extb", "", ""
         ]
 
         self.flag_names = ["c","z","s","o","","","","","i","u","","","","","",""]
