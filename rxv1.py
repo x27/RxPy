@@ -451,7 +451,7 @@ class rxv1_processor_t(processor_t):
         insn.size = 2
 
     def decode_b1_ld_rs_rd(self, insn):
-        insn.size = 2 + self.set_ld(insn, 0, 0, 0, MEMEX_UB, 1, 4, 2)        
+        insn.size = 2 + self.set_ld(insn, 0, 0, 0, MEMEX_UB|MEMEX_NEED_SHOW, 1, 4, 2)        
         self.set_reg(insn, 1, 1, 0)
 
     def decode_b2_mi_ld_rs_rd(self, insn):
