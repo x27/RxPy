@@ -1310,6 +1310,15 @@ class rxv1_processor_t(processor_t):
         # instructions
         self.icode_return = self.itype_rts                    
 
+    # todo: make for all cases
+    def expand_sign_and_value(self, op, memex):
+        if (op.dtype == dt_byte) and (op.value & 0x80 != 0) and (memex & MEMEX_L == MEMEX_L):
+            op.dtype = dt_dword
+            op.value |= 0xFFFFFF00
+        elif (op.dtype == dt_word) and (op.value & 0x8000 != 0) and (memex & MEMEX_L == MEMEX_L):
+            op.dtype = dt_dword
+            op.value |= 0xFFFF0000
+
     def ev_out_operand(self, ctx: outctx_t, op):
         optype = op.type
 
@@ -1328,6 +1337,7 @@ class rxv1_processor_t(processor_t):
             elif op.dtype == dt_dword:
                 op.value &= 0xFFFFFFFF
             #ctx.out_value(op, OOFW_IMM | OOFS_NOSIGN)
+            self.expand_sign_and_value(op, ctx.insn.memex)
             ctx.out_value(op, OOFW_IMM)
 
         elif optype in [o_near, o_mem]:
