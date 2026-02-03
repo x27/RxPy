@@ -352,6 +352,7 @@ class rxv1_processor_t(processor_t):
                     op.value = op.value | 0xff000000
                 op.dtype = dt_dword
                 size = 3
+        self.expand_sign_and_value(op, insn.memex)
         return size
 
     def get_memex_scale(self, memex):
@@ -1337,7 +1338,6 @@ class rxv1_processor_t(processor_t):
             elif op.dtype == dt_dword:
                 op.value &= 0xFFFFFFFF
             #ctx.out_value(op, OOFW_IMM | OOFS_NOSIGN)
-            self.expand_sign_and_value(op, ctx.insn.memex)
             ctx.out_value(op, OOFW_IMM)
 
         elif optype in [o_near, o_mem]:
