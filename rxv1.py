@@ -1488,7 +1488,14 @@ class rxv1_processor_t(processor_t):
                             prevprev.Op2.reg == insn.Op1.reg:
                                 idc.set_cmt(insn.ea, f"set {hex(prevprev.Op1.value) if prevprev.Op1.value > 9 else prevprev.Op1.value}", 0)
                     elif insn.Op1.type == o_imm:
-                        idc.set_cmt(insn.ea, f"set {self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
+                        if self.get_itype_group(insn.itype) == RX_GROUP_MOV:
+                            idc.set_cmt(insn.ea, f"set {self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
+                        elif self.get_itype_group(insn.itype) == RX_GROUP_BSET:
+                            idc.set_cmt(insn.ea, f"set bit{self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
+                        elif self.get_itype_group(insn.itype) == RX_GROUP_BCLR:
+                            idc.set_cmt(insn.ea, f"clear bit{self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
+                        elif self.get_itype_group(insn.itype) == RX_GROUP_BTST:
+                            idc.set_cmt(insn.ea, f"test bit{self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
 
         # mov.l #imm, rX
         # movu.? disp[rX], rY
