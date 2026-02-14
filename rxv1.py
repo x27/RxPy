@@ -1470,7 +1470,7 @@ class rxv1_processor_t(processor_t):
 
         # TODO: check, need exist segment of data
 
-        if self.get_itype_group(insn.itype) in [RX_GROUP_MOV, RX_GROUP_BSET, RX_GROUP_BCLR, RX_GROUP_BTST] and insn.Op2.type == o_displ:
+        if self.get_itype_group(insn.itype) in [RX_GROUP_MOV, RX_GROUP_MOVU, RX_GROUP_BSET, RX_GROUP_BCLR, RX_GROUP_BTST, RX_GROUP_BNOT, RX_GROUP_CMP] and insn.Op2.type == o_displ:
             prev = insn_t()
             if decode_prev_insn(prev, insn.ea) != BADADDR and \
                 self.get_itype_group(prev.itype) == RX_GROUP_MOV and \
@@ -1488,7 +1488,7 @@ class rxv1_processor_t(processor_t):
                             prevprev.Op2.reg == insn.Op1.reg:
                                 idc.set_cmt(insn.ea, f"set {hex(prevprev.Op1.value) if prevprev.Op1.value > 9 else prevprev.Op1.value}", 0)
                     elif insn.Op1.type == o_imm:
-                        if self.get_itype_group(insn.itype) == RX_GROUP_MOV:
+                        if self.get_itype_group(insn.itype) in [RX_GROUP_MOV, RX_GROUP_MOVU]:
                             idc.set_cmt(insn.ea, f"set {self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
                         elif self.get_itype_group(insn.itype) == RX_GROUP_BSET:
                             idc.set_cmt(insn.ea, f"set bit{self.get_ui_value(insn.Op1.value, insn.Op1.dtype)}", 0)
