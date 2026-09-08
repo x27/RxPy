@@ -660,7 +660,7 @@ class rxv1_processor_t(processor_t):
         insn.memex = (val0 & 1) | MEMEX_NEED_SHOW
         insn.Op1.type = o_phrase
         insn.Op1.phrase = PHRASE_R_PLUS if ad == 2 else PHRASE_R_MINUS
-        insn.Op1.value = val1 >> 4
+        insn.Op1.reg = val1 >> 4
         self.set_reg(insn, 1, 2, 0)
         insn.size = 3
 
