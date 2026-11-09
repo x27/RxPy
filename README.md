@@ -1,8 +1,8 @@
-# Renesas RXv1 architecture processor module for IDA Pro
+# Renesas RXv1/2 architecture processor module for IDA Pro
 
 ### Why
 
-* Big Endian
+* Big Endian (The official module does not support big-endian code)
 * Displaying additional data for instructions
 * Quick error correction
 * Easy addition of heuristics
@@ -11,4 +11,4 @@
 
 ### Destination
 
-* IDA Pro 9.2
+* IDA Pro 9.2-9.5
