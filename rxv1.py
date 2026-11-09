@@ -862,7 +862,7 @@ class rxv1_processor_t(processor_t):
     def decode_b3_li_cr(self, insn):
         insn.size = 3 + self.set_imm(insn, 0, 1, 2, 3)
         cr = self.get_hl_byte(insn.ea+2) & 0x0F
-        if cr == 1 or cr > 3 and cr < 8 or cr > 12:
+        if cr == 1 or cr > 3 and cr < 8 or cr > 13:
             return
         insn.Op2.type = o_creg
         insn.Op2.dtype = dt_byte
@@ -886,7 +886,7 @@ class rxv1_processor_t(processor_t):
 
     def decode_b2_cr(self, insn):
         cr = self.get_hl_byte(insn.ea+1) & 0x0F
-        if cr == 1 or cr > 3 and cr < 8 or cr > 12:
+        if cr == 1 or cr > 3 and cr < 8 or cr > 13:
             return
         insn.Op1.type = o_creg
         insn.Op1.dtype = dt_byte
@@ -1034,6 +1034,13 @@ class rxv1_processor_t(processor_t):
         insn.size = 3
 
     def decode_b3_adest_imm1(self, insn):
+        val = self.get_hl_byte(insn.ea+2)
+        insn.Op1.type = o_imm
+        insn.Op1.dtype = dt_byte
+        insn.Op1.value = 1 if val & 0x10 == 0 else 2
+        insn.Op2.type = o_adest
+        insn.Op2.dtype = dt_byte
+        insn.Op2.value = (val >> 7) & 1
         insn.size = 3
 
             
@@ -1143,11 +1150,11 @@ class rxv1_processor_t(processor_t):
             { 'name': 'itof_1n',    'mnem': [ 0x06, 0xff, 0x20, 0x3c, 0x11, 0xff ], 'decode': self.decode_b3_mi_ld_rs_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_ITOF },
             { 'name': 'jmp',        'mnem': [ 0x7f, 0xff, 0x00, 0xf0, 0x00, 0x00 ], 'decode': self.decode_b2_reg, 'feature': CF_USE1 | CF_JUMP, 'group' : RX_GROUP_JMP },
             { 'name': 'jsr',        'mnem': [ 0x7f, 0xff, 0x10, 0xf0, 0x00, 0x00 ], 'decode': self.decode_b2_reg, 'feature': CF_USE1 | CF_CALL, 'group' : RX_GROUP_JSR },
-            { 'name': 'machi',      'mnem': [ 0xfd, 0xff, 0x04, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rd, 'feature': CF_USE1 | CF_USE2, 'group' : RX_GROUP_MACHI },
+            { 'name': 'machi',      'mnem': [ 0xfd, 0xff, 0x04, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MACHI },
 
-            { 'name': 'maclh',      'mnem': [ 0xfd, 0xff, 0x04, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MACLH },
+            { 'name': 'maclh',      'mnem': [ 0xfd, 0xff, 0x06, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MACLH },
 
-            { 'name': 'maclo',      'mnem': [ 0xfd, 0xff, 0x05, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rd, 'feature': CF_USE1 | CF_USE2, 'group' : RX_GROUP_MACLO },
+            { 'name': 'maclo',      'mnem': [ 0xfd, 0xff, 0x05, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MACLO },
             { 'name': 'max_1',      'mnem': [ 0xfd, 0xff, 0x70, 0xf3, 0x40, 0xf0 ], 'decode': self.decode_b3_li_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_MAX },
             { 'name': 'max_2u',     'mnem': [ 0xfc, 0xff, 0x10, 0xfc, 0x00, 0x00 ], 'decode': self.decode_b2_ld_rs_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_MAX },
             { 'name': 'max_2n',     'mnem': [ 0x06, 0xff, 0x20, 0x3c, 0x04, 0xff ], 'decode': self.decode_b3_mi_ld_rs_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_MAX },
@@ -1188,13 +1195,13 @@ class rxv1_processor_t(processor_t):
             { 'name': 'mul_4',      'mnem': [ 0xff, 0xff, 0x30, 0xf0, 0x00, 0x00 ], 'decode': self.decode_b2_rd_rs_rs2, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MUL },
             
             { 'name': 'mulhi',      'mnem': [ 0xfd, 0xff, 0x00, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MULHI },
-            { 'name': 'mullh',      'mnem': [ 0xfd, 0xff, 0x00, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MULLH },
-            { 'name': 'mullo',      'mnem': [ 0xfd, 0xff, 0x01, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MULLO },
+            { 'name': 'mullh',      'mnem': [ 0xfd, 0xff, 0x02, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MULLH },
+            { 'name': 'mullo',      'mnem': [ 0xfd, 0xff, 0x01, 0xf7, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rs2_adest, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MULLO },
 
             { 'name': 'mvfacgu',    'mnem': [ 0xfd, 0xff, 0x1e, 0xfe, 0x30, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACGU },
-            { 'name': 'mvfachi',    'mnem': [ 0xfd, 0xff, 0x1f, 0xff, 0x00, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_CHG1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACHI },
+            { 'name': 'mvfachi',    'mnem': [ 0xfd, 0xff, 0x1e, 0xfe, 0x00, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_CHG1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACHI },
             { 'name': 'mvfaclo',    'mnem': [ 0xfd, 0xff, 0x1e, 0xfe, 0x10, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_CHG1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACLO },
-            { 'name': 'mvfacmi',    'mnem': [ 0xfd, 0xff, 0x1f, 0xff, 0x20, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_CHG1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACMI },
+            { 'name': 'mvfacmi',    'mnem': [ 0xfd, 0xff, 0x1e, 0xfe, 0x20, 0x30 ], 'decode': self.decode_b3_imm2_rd, 'feature': CF_CHG1 | CF_USE2 | CF_CHG3, 'group' : RX_GROUP_MVFACMI },
 
             { 'name': 'mvfc',       'mnem': [ 0xfd, 0xff, 0x6a, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_cr_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_MVFC },
             
@@ -1226,6 +1233,7 @@ class rxv1_processor_t(processor_t):
             { 'name': 'racl',       'mnem': [ 0xfd, 0xff, 0x19, 0xff, 0x00, 0x6f ], 'decode': self.decode_b3_adest_imm1, 'feature': CF_USE1, 'group' : RX_GROUP_RACL },
 
             { 'name': 'racw',       'mnem': [ 0xfd, 0xff, 0x48, 0xff, 0x00, 0xef ], 'decode': self.decode_b3_imm1, 'feature': CF_USE1, 'group' : RX_GROUP_RACW },
+            { 'name': 'racw_2',     'mnem': [ 0xfd, 0xff, 0x18, 0xff, 0x00, 0x6f ], 'decode': self.decode_b3_adest_imm1, 'feature': CF_USE1, 'group' : RX_GROUP_RACW },
 
             { 'name': 'rdacl',      'mnem': [ 0xfd, 0xff, 0x19, 0xff, 0x40, 0x6f ], 'decode': self.decode_b3_adest_imm1, 'feature': CF_USE1, 'group' : RX_GROUP_RDACL },
             { 'name': 'rdacw',      'mnem': [ 0xfd, 0xff, 0x18, 0xff, 0x40, 0x6f ], 'decode': self.decode_b3_adest_imm1, 'feature': CF_USE1, 'group' : RX_GROUP_RDACW },
@@ -1266,6 +1274,7 @@ class rxv1_processor_t(processor_t):
             { 'name': 'smovu',      'mnem': [ 0x7f, 0xff, 0x87, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2, 'feature': 0, 'group' : RX_GROUP_SMOVU },
             { 'name': 'sstr',       'mnem': [ 0x7f, 0xff, 0x88, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_sz2, 'feature': 0, 'group' : RX_GROUP_SSTR },
             { 'name': 'stnz',       'mnem': [ 0xfd, 0xff, 0x70, 0xf3, 0xf0, 0xf0 ], 'decode': self.decode_b3_li_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_STNZ },
+            { 'name': 'stnz_2',     'mnem': [ 0xfc, 0xff, 0x4f, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_STNZ },
             { 'name': 'stz_1',      'mnem': [ 0xfd, 0xff, 0x70, 0xf3, 0xe0, 0xf0 ], 'decode': self.decode_b3_li_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_STZ },
             { 'name': 'stz_2',      'mnem': [ 0xfc, 0xff, 0x4b, 0xff, 0x00, 0x00 ], 'decode': self.decode_b2_rs_rd, 'feature': CF_USE1 | CF_CHG2, 'group' : RX_GROUP_STZ },
             { 'name': 'sub_1',      'mnem': [ 0x60, 0xff, 0x00, 0x00, 0x00, 0x00 ], 'decode': self.decode_b1_uimm4_rd, 'feature': CF_USE1 | CF_USE2 | CF_CHG2, 'group' : RX_GROUP_SUB },
